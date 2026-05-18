@@ -1,0 +1,15 @@
+faster-whisper>=1.0.0
+pymupdf>=1.23.0
+sentence-transformers>=3.0.0
+chromadb>=0.5.0
+langgraph>=0.2.0
+langchain-core>=0.3.0
+anthropic>=0.40.0
+google-genai>=1.0.0
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.12
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
+aiofiles>=23.0.0

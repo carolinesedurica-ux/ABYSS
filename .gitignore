@@ -1,0 +1,36 @@
+# Secrets
+.env
+omno
+
+# Vector store data
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Whisper model cache
+~/.cache/whisper/
+
+# Sentence-transformers model cache
+~/.cache/torch/
+~/.cache/huggingface/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+server_*.txt
+
+# OS
+.DS_Store
+Thumbs.db

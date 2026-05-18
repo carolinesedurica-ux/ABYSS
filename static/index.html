@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A.B.Y.S.S.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- scanline + vignette overlays are pure CSS on body -->
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-brk">[</span><span class="logo-g">A</span><span class="logo-sep">.</span><span class="logo-p">B</span><span class="logo-sep">.</span><span class="logo-g">Y</span><span class="logo-sep">.</span><span class="logo-p">S</span><span class="logo-sep">.</span><span class="logo-g">S</span><span class="logo-sep">.</span><span class="logo-brk">]</span>
+      </div>
+      <div class="header-meta">
+        <span class="status-dot"></span>
+        <span class="status-label">ONLINE</span>
+        <span class="ver-tag">v0.2</span>
+      </div>
+    </div>
+    <div class="tagline">// automated business intelligence &amp; shadow-data scanner &nbsp;·&nbsp; gemini 2.5 pro + flash &nbsp;·&nbsp; langgraph</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="query">▶&nbsp; QUERY</button>
+    <button class="tab" data-tab="ingest">⬆&nbsp; INGEST</button>
+    <button class="tab" data-tab="sources">◎&nbsp; SOURCES</button>
+    <button class="tab" data-tab="vault">⬇&nbsp; VAULT</button>
+  </nav>
+
+  <main>
+
+    <!-- ── QUERY ─────────────────────────────────────── -->
+    <section id="tab-query" class="panel active">
+
+      <div class="input-block">
+        <div class="input-label">// natural language query &nbsp;<span class="hint">ctrl+enter to run</span></div>
+        <div class="input-shell" id="input-shell">
+          <span class="caret">❯</span>
+          <textarea id="query-input" rows="3" placeholder="What did the lead engineer say about the microchip supply shortage?"></textarea>
+        </div>
+        <button id="query-btn" class="btn btn-green">
+          <span id="query-btn-label">RUN QUERY</span>
+          <span class="btn-arrow">▶</span>
+        </button>
+      </div>
+
+      <div id="pipeline-steps" class="pipeline hidden">
+        <div class="step" id="step-router">ROUTER</div>
+        <div class="step-arrow">→</div>
+        <div class="step" id="step-retrieve">RETRIEVE</div>
+        <div class="step-arrow">→</div>
+        <div class="step" id="step-evaluate">EVALUATE</div>
+        <div class="step-arrow">→</div>
+        <div class="step" id="step-synthesize">SYNTHESIZE</div>
+      </div>
+
+      <div id="query-loading" class="scanbar hidden"></div>
+
+      <div id="query-result" class="card hidden">
+        <div class="card-header green">
+          <span>// ANSWER</span>
+          <span id="result-meta" class="meta"></span>
+        </div>
+        <div id="answer-text" class="card-body typewriter"></div>
+
+        <div class="card-header pink" id="cit-header">// SOURCES</div>
+        <div id="citations" class="citations"></div>
+      </div>
+
+      <div id="query-error" class="errbox hidden"></div>
+    </section>
+
+    <!-- ── INGEST ─────────────────────────────────────── -->
+    <section id="tab-ingest" class="panel hidden">
+
+      <div id="drop-zone" class="dropzone">
+        <div class="drop-icon">⬆</div>
+        <div class="drop-title">DROP FILES HERE</div>
+        <div class="drop-sub">MP4 &nbsp;·&nbsp; MKV &nbsp;·&nbsp; MOV &nbsp;·&nbsp; MP3 &nbsp;·&nbsp; WAV &nbsp;·&nbsp; PDF</div>
+        <input type="file" id="file-input" multiple accept=".mp4,.mkv,.mov,.avi,.webm,.mp3,.wav,.m4a,.ogg,.flac,.pdf" hidden />
+        <button class="btn btn-cyan" onclick="document.getElementById('file-input').click()">SELECT FILES</button>
+      </div>
+
+      <div id="file-queue" class="file-list hidden"></div>
+      <div id="ingest-loading" class="scanbar hidden"></div>
+
+      <div id="ingest-result" class="card hidden">
+        <div class="card-header cyan">// INGESTION COMPLETE</div>
+        <div id="ingest-output" class="card-body"></div>
+      </div>
+
+      <div id="ingest-error" class="errbox hidden"></div>
+    </section>
+
+    <!-- ── SOURCES ────────────────────────────────────── -->
+    <section id="tab-sources" class="panel hidden">
+      <div class="sources-bar">
+        <span>// INDEXED KNOWLEDGE BASE</span>
+        <button class="btn btn-sm" onclick="loadSources()">↺ REFRESH</button>
+      </div>
+      <div id="sources-list" class="source-list">
+        <div class="empty">loading...</div>
+      </div>
+    </section>
+
+    <!-- ── VAULT ─────────────────────────────────────── -->
+    <section id="tab-vault" class="panel hidden">
+
+      <div class="vault-header">
+        <div>
+          <div class="vault-title">// INFORMATION VAULT</div>
+          <div class="vault-sub">upload dark data · store for future mining · extract knowledge on demand</div>
+        </div>
+        <div class="vault-actions">
+          <button class="btn btn-sm" onclick="loadVault()">↺ REFRESH</button>
+          <button class="btn btn-pink" id="mine-all-btn" onclick="mineAll()">⚡ MINE ALL</button>
+        </div>
+      </div>
+
+      <!-- stats row -->
+      <div id="vault-stats" class="vault-stats hidden">
+        <div class="stat-box" id="stat-total"><span class="stat-num">0</span><span class="stat-lbl">TOTAL</span></div>
+        <div class="stat-box" id="stat-stored"><span class="stat-num">0</span><span class="stat-lbl">STORED</span></div>
+        <div class="stat-box" id="stat-mining"><span class="stat-num">0</span><span class="stat-lbl">MINING</span></div>
+        <div class="stat-box" id="stat-mined"><span class="stat-num">0</span><span class="stat-lbl">MINED</span></div>
+        <div class="stat-box" id="stat-error"><span class="stat-num">0</span><span class="stat-lbl">ERROR</span></div>
+      </div>
+
+      <!-- upload zone -->
+      <div id="vault-drop" class="dropzone vault-drop">
+        <div class="drop-icon">⬇</div>
+        <div class="drop-title">UPLOAD TO VAULT</div>
+        <div class="drop-sub">MP4 &nbsp;·&nbsp; MKV &nbsp;·&nbsp; MOV &nbsp;·&nbsp; MP3 &nbsp;·&nbsp; WAV &nbsp;·&nbsp; PDF</div>
+        <input type="file" id="vault-file-input" multiple accept=".mp4,.mkv,.mov,.avi,.webm,.mp3,.wav,.m4a,.ogg,.flac,.pdf" hidden />
+        <button class="btn btn-cyan" onclick="document.getElementById('vault-file-input').click()">SELECT FILES</button>
+      </div>
+
+      <div id="vault-upload-loading" class="scanbar hidden"></div>
+      <div id="vault-upload-error" class="errbox hidden"></div>
+
+      <!-- file grid -->
+      <div id="vault-list" class="vault-list hidden"></div>
+      <div id="vault-empty" class="empty hidden">// vault is empty — upload files above</div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <span>A.B.Y.S.S.</span>
+    <span class="fsep">·</span>
+    <span>GEMINI 2.5</span>
+    <span class="fsep">·</span>
+    <span>LANGGRAPH</span>
+    <span class="fsep">·</span>
+    <span>CHROMADB</span>
+    <span class="fsep">·</span>
+    <span>FASTER-WHISPER</span>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
