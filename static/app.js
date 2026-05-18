@@ -134,7 +134,7 @@ function badgeFor(ext) {
   return `<span class="badge badge-pdf">PDF</span>`;
 }
 
-function handleFiles(files) {
+async function handleFiles(files) {
   if (!files.length) return;
 
   fileQueue.innerHTML = '';
@@ -154,21 +154,30 @@ function handleFiles(files) {
   const form = new FormData();
   files.forEach(f => form.append('files', f));
 
-  fetch('/ingest', { method: 'POST', body: form })
-    .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-    .then(data => {
-      let out = '';
-      if (data.processed.length) out += `✓  processed: ${data.processed.join(', ')}\n`;
-      out += `✓  chunks stored: ${data.total_chunks}`;
-      if (data.errors.length) out += `\n✗  errors:\n${data.errors.map(e => '   ' + e).join('\n')}`;
-      document.getElementById('ingest-output').textContent = out;
-      iResult.classList.remove('hidden');
-    })
-    .catch(err => {
-      iError.textContent = `ERROR: ${err.message}`;
-      iError.classList.remove('hidden');
-    })
-    .finally(() => iLoading.classList.add('hidden'));
+  try {
+    // 1. Store in vault
+    const upRes = await fetch('/vault/upload', { method: 'POST', body: form });
+    if (!upRes.ok) throw new Error(`HTTP ${upRes.status} — ${await upRes.text()}`);
+    const upData = await upRes.json();
+
+    // 2. Kick off mining for every newly stored file
+    await fetch('/vault/mine-all', { method: 'POST' });
+
+    const n = upData.count;
+    document.getElementById('ingest-output').textContent =
+      `✓  ${n} file${n !== 1 ? 's' : ''} added to vault\n` +
+      `✓  mining queued — switching to VAULT tab…`;
+    iResult.classList.remove('hidden');
+
+    // 3. Auto-switch to vault so the user sees live mining status
+    setTimeout(() => document.querySelector('[data-tab="vault"]').click(), 1200);
+  } catch (err) {
+    iError.textContent = `ERROR: ${err.message}`;
+    iError.classList.remove('hidden');
+  } finally {
+    iLoading.classList.add('hidden');
+    fileInput.value = '';
+  }
 }
 
 // ── Sources ───────────────────────────────────────────────────
