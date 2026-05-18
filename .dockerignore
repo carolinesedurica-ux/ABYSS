@@ -1,0 +1,12 @@
+omno
+.env
+data/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.git/
+.vscode/
+server_*.txt
+*.log
+.env.example

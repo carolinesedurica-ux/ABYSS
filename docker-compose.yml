@@ -1,0 +1,14 @@
+services:
+  abyss:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - abyss_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  abyss_data:
