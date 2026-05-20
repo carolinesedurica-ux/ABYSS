@@ -103,7 +103,9 @@ def _ingest_node(state: PipelineState) -> PipelineState:
 
 
 def _list_sources_node(state: PipelineState) -> PipelineState:
-    chroma_path = os.getenv("CHROMA_PATH", "./data/chroma_db")
+    is_vercel = "VERCEL" in os.environ
+    default_path = "/tmp/chroma_db" if is_vercel else "./data/chroma_db"
+    chroma_path = os.getenv("CHROMA_PATH", default_path)
     try:
         client = chromadb.PersistentClient(path=chroma_path)
         col = client.get_collection("dark_data")

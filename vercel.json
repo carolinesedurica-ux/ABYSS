@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/query", "destination": "/api/index" },
+    { "source": "/run", "destination": "/api/index" },
+    { "source": "/ingest", "destination": "/api/index" },
+    { "source": "/sources", "destination": "/api/index" },
+    { "source": "/vault/(.*)", "destination": "/api/index" },
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/", "destination": "/static/index.html" },
+    { "source": "/static/(.*)", "destination": "/static/$1" }
+  ]
+}

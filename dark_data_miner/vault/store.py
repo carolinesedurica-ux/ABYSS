@@ -19,8 +19,12 @@ VIDEO_EXTS = {".mp4", ".mkv", ".mov", ".avi", ".webm"}
 AUDIO_EXTS = {".mp3", ".wav", ".m4a", ".ogg", ".flac"}
 
 
+IS_VERCEL = "VERCEL" in os.environ
+
+
 def _vault() -> Path:
-    return Path(os.getenv("VAULT_PATH", "./data/vault"))
+    default_path = "/tmp/vault" if IS_VERCEL else "./data/vault"
+    return Path(os.getenv("VAULT_PATH", default_path))
 
 
 def _files_dir() -> Path:

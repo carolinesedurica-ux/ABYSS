@@ -91,7 +91,9 @@ def cmd_query(question: str) -> None:
 
 def cmd_serve() -> None:
     import uvicorn
-    uvicorn.run("dark_data_miner.api.server:app", host="0.0.0.0", port=8000, reload=True)
+    import os
+    port = int(os.getenv("PORT", "8000"))
+    uvicorn.run("dark_data_miner.api.server:app", host="0.0.0.0", port=port, reload=True)
 
 
 # ── CLI dispatch ──────────────────────────────────────────────────────────────

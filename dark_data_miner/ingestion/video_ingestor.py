@@ -5,17 +5,17 @@ faster-whisper accepts raw MP4/MKV/MOV/MP3/WAV — ffmpeg handles demuxing inter
 """
 import os
 from pathlib import Path
-from faster_whisper import WhisperModel
 from .models import DocumentChunk
 
 VIDEO_EXTS = {".mp4", ".mkv", ".mov", ".avi", ".webm"}
 AUDIO_EXTS = {".mp3", ".wav", ".m4a", ".ogg", ".flac"}
-_model: WhisperModel | None = None
+_model = None
 
 
-def _get_model() -> WhisperModel:
+def _get_model():
     global _model
     if _model is None:
+        from faster_whisper import WhisperModel
         model_size = os.getenv("WHISPER_MODEL", "base")
         _model = WhisperModel(model_size, device="cpu", compute_type="int8")
     return _model
